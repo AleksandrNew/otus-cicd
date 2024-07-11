@@ -45,5 +45,16 @@ namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
 
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Создать промокод и выдать его клиентам с указанным предпочтением
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public Task<IActionResult> GivePromoCodesToCustomersWithPreferenceAsync(GivePromoCodeRequest request)
+        {
+            //TODO: Создать промокод и выдать его клиентам с указанным предпочтением
+            throw new NotImplementedException();
+        }
     }
 }

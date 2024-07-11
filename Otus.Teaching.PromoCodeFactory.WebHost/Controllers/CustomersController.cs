@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Otus.Teaching.PromoCodeFactory.Core.Abstractions.Repositories;
 using Otus.Teaching.PromoCodeFactory.Core.Domain.PromoCodeManagement;
-using Otus.Teaching.PromoCodeFactory.WebHost.Mappers;
 using Otus.Teaching.PromoCodeFactory.WebHost.Models;
 
 namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
@@ -29,12 +28,17 @@ namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<CustomerShortResponse>> GetCustomersAsync()
+        public async Task<ActionResult<List<CustomerShortResponse>>> GetCustomersAsync()
         {
             var customers =  await _customerRepository.GetAllAsync();
 
-            var response = customers
-                .Select(x => new CustomerShortResponse(x)).ToList();
+            var response = customers.Select(x => new CustomerShortResponse()
+            {
+                Id = x.Id,
+                Email = x.Email,
+                FirstName = x.FirstName,
+                LastName = x.LastName
+            }).ToList();
 
             return Ok(response);
         }
@@ -52,9 +56,21 @@ namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerResponse>> CreateCustomerAsync(CreateOrEditCustomerRequest request)
         {
-            var preferences =  await GetPreferencesAsync(request.PreferenceIds);
-            
-            var customer = CustomerMapper.MapFromModel(request, preferences);
+            //Получаем предпочтения из бд и сохраняем большой объект
+            var preferences = await _preferenceRepository
+                .GetRangeByIdsAsync(request.PreferenceIds);
+
+            var customer = new Customer()
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+            };
+            customer.Preferences = preferences.Select(x => new CustomerPreference()
+            {
+                Customer = customer,
+                Preference = x
+            }).ToList();
             
             await _customerRepository.AddAsync(customer);
 
@@ -69,9 +85,17 @@ namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
             if (customer == null)
                 return NotFound();
             
-            var preferences =  await GetPreferencesAsync(request.PreferenceIds);
-
-            CustomerMapper.MapFromModel(request, preferences, customer);
+            var preferences = await _preferenceRepository.GetRangeByIdsAsync(request.PreferenceIds);
+            
+            customer.Email = request.Email;
+            customer.FirstName = request.FirstName;
+            customer.LastName = request.LastName;
+            customer.Preferences.Clear();
+            customer.Preferences = preferences.Select(x => new CustomerPreference()
+            {
+                Customer = customer,
+                Preference = x
+            }).ToList();
 
             await _customerRepository.UpdateAsync(customer);
 
@@ -89,19 +113,6 @@ namespace Otus.Teaching.PromoCodeFactory.WebHost.Controllers
             await _customerRepository.DeleteAsync(customer);
 
             return NoContent();
-        }
-
-        private Task<IEnumerable<Preference>> GetPreferencesAsync(IEnumerable<Guid> ids)
-        {
-            IEnumerable<Preference> preferences = new List<Preference>();
-            if (ids != null && ids.Any())
-            {
-                //Получаем предпочтения из бд и сохраняем большой объект
-                return _preferenceRepository
-                    .GetRangeByIdsAsync(ids.ToList());
-            }
-
-            return Task.FromResult(preferences);
         }
     }
 }

@@ -3,7 +3,7 @@ name: CI-Build-And-Tests
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
   
 jobs:

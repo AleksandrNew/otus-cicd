@@ -3,9 +3,9 @@ name: CI-Build
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest

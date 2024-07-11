@@ -18,7 +18,9 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-      <PackageReference Include="NSwag.AspNetCore" Version="14.0.8" />
+      <PackageReference Include="EFCore.NamingConventions" Version="6.0.0" />
+
+		<PackageReference Include="NSwag.AspNetCore" Version="14.0.8" />
     </ItemGroup>
 
 </Project>

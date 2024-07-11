@@ -17,6 +17,8 @@ namespace Otus.Teaching.PromoCodeFactory.DataAccess
         public DbSet<Role> Roles { get; set; }
         
         public DbSet<Employee> Employees { get; set; }
+        
+        public DbSet<Partner> Partners { get; set; }
 
         public DataContext()
         {
