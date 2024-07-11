@@ -9,15 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    # services:
-    #   docker:
-    #     image: docker:20.10.9-dind
-    #     options: --privileged
-
     env:
       CI_REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
-      CI_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -27,10 +20,11 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Log in to GitHub Container Registry
-        run: echo $CI_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and push Docker image
         run: |
-          REPO_NAME=$(echo "$CI_REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
-          docker build ./ -t ghcr.io/${REPO_NAME}:latest
-          docker push ghcr.io/${REPO_NAME}:latest
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_TAG=ghcr.io/$REPO_NAME:latest
+          docker build ./ -t $IMAGE_TAG
+          docker push $IMAGE_TAG
