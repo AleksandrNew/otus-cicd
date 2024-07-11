@@ -1,0 +1,28 @@
+name: CI-Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+
+    env:
+      PROJECT_NAME: Otus.Teaching.PromoCodeFactory.WebHost
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build project
+        run: dotnet build ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -c Release -o content
+
+      - name: Archive build output
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-output
+          path: content

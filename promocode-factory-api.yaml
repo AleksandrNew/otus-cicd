@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: promocode-factory-api
+  labels:
+    app: factory-api
+    version: "12.2020"
+  annotations:
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: promocode-factory-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: promocode-factory-api
+    spec:
+      containers:
+      - name: promocode-factory-api
+        image: registry.gitlab.com/aleksandrn/dot-net2:latest
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /swagger/index.html
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 5 # Default is 1
+          periodSeconds: 15 # Default is 10
+          failureThreshold: 2 # Default is 3
+        readinessProbe:
+          httpGet:
+            path: /swagger/index.html
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 5 # Default is 1
+          periodSeconds: 15 # Default is 10
+          failureThreshold: 2 # Default is 3
+        volumeMounts:
+          - name: promocode-factory-api-settings-vol
+            mountPath: /app/config
+      volumes:
+        - name: promocode-factory-api-settings-vol
+          configMap:
+            name: promocode-factory-api-settings        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: promocode-factory-api-service
+  labels:
+    app: factory-api
+    version: "12.2020"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 80
+  selector:
+    app.kubernetes.io/name: promocode-factory-api
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promocode-factory-api-settings
+  labels:
+    app: factory-api
+    version: "12.2020"
+    env: dev
+data:
+  appsettings.json: |
+    {
+         "LogLevel": {
+           "Default": "Information",
+           "Microsoft": "Warning",
+           "Microsoft.Hosting.Lifetime": "Information"
+         }
+       },
+       "AllowedHosts": "*"
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: private-repo-secret
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: UmVhbGx5IHJlYWxseSByZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGx5eXl5eXl5eXl5eXl5eXl5eXl5eSBsbGxsbGxsbGxsbGxsbG9vb29vb29vb29vb29vb29vb29vb29vb29vb25ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubmdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2cgYXV0aCBrZXlzCg
