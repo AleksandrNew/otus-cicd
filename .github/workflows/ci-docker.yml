@@ -10,13 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:20.10.9-dind
-        options: --privileged
+    # services:
+    #   docker:
+    #     image: docker:20.10.9-dind
+    #     options: --privileged
 
     env:
-      CI_REGISTRY_IMAGE: ${{ github.repository }}
+      CI_REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
       CI_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
@@ -31,6 +31,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "$CI_REGISTRY_IMAGE" | tr '[:upper:]' '[:lower:]')
           docker build ./ -t ghcr.io/${REPO_NAME}:latest
           docker push ghcr.io/${REPO_NAME}:latest
