@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/dotnet/sdk:8.0
 
     env:
       PROJECT_NAME: Otus.Teaching.PromoCodeFactory.WebHost
