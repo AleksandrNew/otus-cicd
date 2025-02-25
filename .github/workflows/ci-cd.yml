@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: "latest"
+          tags: "${{ secrets.ACR_LOGIN_SERVER }}/promocode:latest"
 
   deploy:
     runs-on: ubuntu-latest
