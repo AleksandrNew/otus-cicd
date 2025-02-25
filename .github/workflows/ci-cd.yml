@@ -50,9 +50,12 @@ jobs:
       - name: Set AKS context
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          chmod 600 kubeconfig.yaml  # Secure the file
           kubectl config current-context
           kubectl cluster-info
+          ls -l kubeconfig.yaml  # Verify the file exists
+      
 
       - name: Verify Kubernetes Connection
         run: kubectl get nodes
