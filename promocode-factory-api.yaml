@@ -84,11 +84,3 @@ data:
       },
       "AllowedHosts": "*"
     }
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: private-repo-secret
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: <BASE64_ENCODED_DOCKER_CONFIG>
