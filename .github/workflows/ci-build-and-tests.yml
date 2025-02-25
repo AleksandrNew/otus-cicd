@@ -5,19 +5,20 @@ on:
     branches:
       - main
   workflow_dispatch:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
       PROJECT_NAME: Otus.Teaching.PromoCodeFactory.WebHost
       TEST_PROJECT_NAME: Otus.Teaching.PromoCodeFactory.UnitTests
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj          
+      
       - name: Build project
         run: dotnet build ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -c Release -o content
 
@@ -25,7 +26,7 @@ jobs:
         run: dotnet test ${{ env.TEST_PROJECT_NAME }}/${{ env.TEST_PROJECT_NAME }}.csproj
 
       - name: Archive build output
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: content
