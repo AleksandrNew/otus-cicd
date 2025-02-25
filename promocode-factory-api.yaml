@@ -15,9 +15,11 @@ spec:
       labels:
         app.kubernetes.io/name: promocode-factory-api
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: promocode-factory-api
-        image: registry.gitlab.com/aleksandrn/dot-net2:latest
+        image: otusregistry.azurecr.io/promocode:latest
         ports:
           - name: http
             containerPort: 80
@@ -84,3 +86,4 @@ data:
       },
       "AllowedHosts": "*"
     }
+

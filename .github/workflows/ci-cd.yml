@@ -24,20 +24,15 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Define Image Tag
-        run: echo "IMAGE_TAG=${{ secrets.ACR_LOGIN_SERVER }}/promocode:$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       - name: Build and push Docker image to ACR
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ env.IMAGE_TAG }}
+          tags: "latest"
           cache-from: type=registry,ref=${{ secrets.ACR_LOGIN_SERVER }}/promocode:cache
           cache-to: type=inline
-
-      - name: Store Image Tag for Deployment
-        run: echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,4 +46,9 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          kubectl create secret docker-registry acr-secret \
+          --docker-server=${{ secrets.ACR_LOGIN_SERVER }} \
+          --docker-username=${{ secrets.ACR_USERNAME }} \
+          --docker-password=${{ secrets.ACR_PASSWORD }} \
+          --docker-email=somemail@mail.com --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f promocode-factory-api.yaml
