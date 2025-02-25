@@ -30,13 +30,18 @@ jobs:
           push: true
           tags: ${{ secrets.ACR_LOGIN_SERVER }}/promocode:latest
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Deploy to Kubernetes
-  #       run: echo "kubectl apply -f promocode-factory-api.yaml"
+      - name: Set up Kubeconfig for AKS
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+      
+      - name: Deploy to AKS
+        run: kubectl apply -f promocode-factory-api.yaml
