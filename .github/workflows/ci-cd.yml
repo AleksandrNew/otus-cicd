@@ -47,14 +47,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set AKS context
+      - name: Verify Kubernetes Connection
         run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          chmod 600 kubeconfig.yaml  # Secure the file
+          echo "Current Context:"
           kubectl config current-context
+          echo "Cluster Info:"
           kubectl cluster-info
-          ls -l kubeconfig.yaml  # Verify the file exists
+          echo "KUBECONFIG Environment Variable:"
+          echo $KUBECONFIG
+          ls -l kubeconfig.yaml
       
 
       - name: Verify Kubernetes Connection
