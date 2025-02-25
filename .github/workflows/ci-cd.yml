@@ -50,5 +50,4 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          kubectl set image deployment/promocode-factory-api promocode-factory-api=${{ env.IMAGE_TAG }}
-          kubectl rollout status deployment/promocode-factory-api
+          kubectl apply -f promocode-factory-api.yaml
