@@ -47,10 +47,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Kubeconfig for AKS
+      - name: Set AKS context
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
+          kubectl config current-context
+          kubectl cluster-info
 
       - name: Verify Kubernetes Connection
         run: kubectl get nodes
