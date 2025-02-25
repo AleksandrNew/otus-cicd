@@ -31,8 +31,6 @@ jobs:
           context: .
           push: true
           tags: "latest"
-          cache-from: type=registry,ref=${{ secrets.ACR_LOGIN_SERVER }}/promocode:cache
-          cache-to: type=inline
 
   deploy:
     runs-on: ubuntu-latest
