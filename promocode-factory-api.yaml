@@ -5,7 +5,6 @@ metadata:
   labels:
     app: factory-api
     version: "02.2025"
-  annotations:
 spec:
   replicas: 2
   selector:
@@ -32,17 +31,17 @@ spec:
             path: /swagger/index.html
             port: 80
           initialDelaySeconds: 15
-          timeoutSeconds: 5 # Default is 1
-          periodSeconds: 15 # Default is 10
-          failureThreshold: 2 # Default is 3
+          timeoutSeconds: 5
+          periodSeconds: 15
+          failureThreshold: 2
         readinessProbe:
           httpGet:
             path: /swagger/index.html
             port: 80
           initialDelaySeconds: 15
-          timeoutSeconds: 5 # Default is 1
-          periodSeconds: 15 # Default is 10
-          failureThreshold: 2 # Default is 3
+          timeoutSeconds: 5
+          periodSeconds: 15
+          failureThreshold: 2
         volumeMounts:
           - name: promocode-factory-api-settings-vol
             mountPath: /app/config
@@ -78,11 +77,18 @@ metadata:
 data:
   appsettings.json: |
     {
-         "LogLevel": {
-           "Default": "Information",
-           "Microsoft": "Warning",
-           "Microsoft.Hosting.Lifetime": "Information"
-         }
-       },
-       "AllowedHosts": "*"
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information"
+      },
+      "AllowedHosts": "*"
     }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: private-repo-secret
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: <BASE64_ENCODED_DOCKER_CONFIG>
