@@ -79,5 +79,6 @@ jobs:
 
       - name: Update Kubernetes Deployment with New Image
         run: |
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
           kubectl set image deployment/promocode-factory-api promocode-factory-api=${{ env.IMAGE_TAG }} --record
           kubectl rollout status deployment/promocode-factory-api
