@@ -4,7 +4,7 @@ metadata:
   name: promocode-factory-api
   labels:
     app: factory-api
-    version: "12.2020"
+    version: "02.2025"
   annotations:
 spec:
   replicas: 2
@@ -73,7 +73,7 @@ metadata:
   name: promocode-factory-api-settings
   labels:
     app: factory-api
-    version: "12.2020"
+    version: "05.2025"
     env: dev
 data:
   appsettings.json: |
