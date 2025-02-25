@@ -73,8 +73,10 @@ jobs:
           ls -l kubeconfig.yaml
       
 
-      - name: Verify Kubernetes Connection
-        run: kubectl get nodes
+      - name: Verify Kubernetes Access
+        run: |
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          kubectl get nodes
 
       - name: Update Kubernetes Deployment with New Image
         run: |
