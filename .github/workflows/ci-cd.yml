@@ -47,38 +47,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set AKS Context
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          chmod 600 kubeconfig.yaml
-          echo "Checking if kubeconfig.yaml exists:"
-          ls -l kubeconfig.yaml
-          echo "Checking kubeconfig.yaml content:"
-          cat kubeconfig.yaml | head -20  # Print first 20 lines for debugging
-          echo "Setting current context..."
-          kubectl config use-context $(kubectl config get-contexts -o name | head -n 1)
-          kubectl config current-context
-          kubectl cluster-info
-
-      - name: Verify Kubernetes Connection
+      - name: Deploy to Kubernetes
         run: |
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          echo "Current Context:"
-          kubectl config current-context
-          echo "Cluster Info:"
-          kubectl cluster-info
-          echo "KUBECONFIG Environment Variable:"
-          echo $KUBECONFIG
-          ls -l kubeconfig.yaml
-
-      - name: Verify Kubernetes Access
-        run: |
-          export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          kubectl get nodes
-
-      - name: Update Kubernetes Deployment with New Image
-        run: |
-          export KUBECONFIG=$(pwd)/kubeconfig.yaml
-          kubectl set image deployment/promocode-factory-api promocode-factory-api=${{ env.IMAGE_TAG }} --record
+          kubectl set image deployment/promocode-factory-api promocode-factory-api=${{ env.IMAGE_TAG }} --record=true
           kubectl rollout status deployment/promocode-factory-api
