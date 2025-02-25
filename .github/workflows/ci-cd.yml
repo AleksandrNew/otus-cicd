@@ -71,7 +71,6 @@ jobs:
           echo "KUBECONFIG Environment Variable:"
           echo $KUBECONFIG
           ls -l kubeconfig.yaml
-      
 
       - name: Verify Kubernetes Access
         run: |
