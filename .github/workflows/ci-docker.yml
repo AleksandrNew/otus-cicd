@@ -25,8 +25,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/$(echo "promocode" | tr '[:upper:]' '[:lower:]'):latest
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build ./ -t ghcr.io/${REPO_NAME}/promocode:latest
+          docker push ghcr.io/${REPO_NAME}/promocode:latest
